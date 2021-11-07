@@ -17,7 +17,6 @@ function App() {
   const [styles, setStyles] = useState({left: 10,top: window.innerHeight - videoHeight - 10})
 
   const detectDrag = (event) => {
-    event.preventDefault();
     // console.log("screenX: ", event);
     // console.log("screenX: ", event.screenX, "screenY: ", event.screenY);
     // console.log("BoundX: ", event.currentTarget.getBoundingClientRect().left, "screenY: ", event.currentTarget.getBoundingClientRect().top);
@@ -29,7 +28,6 @@ function App() {
   }
 
   const continueDrag = (event) => {
-    event.preventDefault();
     if(isDragging) {
       setLeft((event.screenX || (event.touches ? event.touches[0].screenX : 0)) - diffX);
       setTop((event.screenY || (event.touches ? event.touches[0].screenY : 0))- diffY);
