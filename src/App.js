@@ -17,10 +17,6 @@ function App() {
   const [isTouchDragging, setIsTouchDragging] = useState(false)
   const [styles, setStyles] = useState({left: 10,top: window.innerHeight - videoHeight - 10})
 
-  // useEffect(() => {
-  //   vidRef.current.pause();
-  // }, [isDragging])
-
   const detectDrag = (event) => {
     // console.log("screenX: ", event);
     // console.log("screenX: ", event.screenX, "screenY: ", event.screenY);
@@ -42,22 +38,17 @@ function App() {
                 top: alignTop(top)
       });
       vidRef.current.pause();
-      //if(event.touches)
-        setIsTouchDragging(true);
+      setIsTouchDragging(true);
     }
-    //vidRef.current.pause();
   }    
 
   const endDrag = (event) => {
-    console.log("Eventtouches: ", !event.touches);
-    if(!(event.touches) && isTouchDragging){
-      if(isTouchDragging){
-        vidRef.current.play();
-      }
-      // vidRef.current.play();
+    //console.log("Eventtouches: ", !event.touches);
+    if(!(event.touches) && isTouchDragging){              // To handle pause in web view.
+      vidRef.current.play();
     }
-    console.log("Dragging: ", isTouchDragging);
-    if(event.touches && !isTouchDragging){
+    //console.log("Dragging: ", isTouchDragging);
+    if(event.touches && !isTouchDragging){              // To handle play/pause in mobile view.
       const video = ReactDOM.findDOMNode(document.getElementById("VideoPlayer"));
       if(video.paused){
         vidRef.current.play();
@@ -111,35 +102,6 @@ function App() {
       transition: '0.5s'
     });
   }
-
-  const endDrag2 = (event) => {
-    // if(isDragging){
-    //   vidRef.current.play();
-    // }
-    // if(!(event && event.touches)){
-    //   vidRef.current.play();
-    // }
-    setIsDragging(false);
-  }
-
-  //added to detech clicks outside of window while dragging.
-//   document.addEventListener("mouseup", (event) => {
-//     const flyoutElement = ReactDOM.findDOMNode(document.getElementById("App"));
-//     let targetElement = event.target; // clicked element
-//     console.log("targetElement: ",targetElement, " app element: ",  flyoutElement);
-//     // do {
-//     //     if (targetElement == flyoutElement) {
-//     //         // This is a click inside. Do nothing, just return.
-//     //         document.getElementById("flyout-debug").textContent = "Clicked inside!";
-//     //         return;
-//     //     }
-//     //     // Go up the DOM
-//     //     targetElement = targetElement.parentNode;
-//     // } while (targetElement);
-
-//     // // This is a click outside.
-//     // document.getElementById("flyout-debug").textContent = "Clicked outside!";
-// }, false);
 
   const alignTop = (topPointer) => {
     if(topPointer < 0) {
