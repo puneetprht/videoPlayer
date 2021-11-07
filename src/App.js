@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import ReactDOM from "react-dom";
-import video from './videoplayback.mp4';
 import './App.css';
 
 function App() {
