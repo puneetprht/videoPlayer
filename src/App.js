@@ -128,7 +128,7 @@ function App() {
         onTouchStart={(e) => detectDrag(e)} onTouchMove={(e) => continueDrag(e)} onTouchEnd={(e) => endDrag(e)}
         onMouseDown={(e) => detectDrag(e)} onMouseMove={(e) => continueDrag(e)} onMouseUp={(e) => endDrag(e)}>
           <video id="VideoPlayer" ref={vidRef} width={videoWidth} height={videoHeight} controls>
-            <source src={video} type="video/mp4"/>
+            <source src="https://knowledge2020box.s3.ap-south-1.amazonaws.com/testObjs/videoplayback.mp4" type="video/mp4"/>
           </video>    
         </div>
       </header>
