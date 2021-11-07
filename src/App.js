@@ -100,6 +100,10 @@ function App() {
       top: alignTop(topLocal),
       transition: '0.5s'
     });
+    setLeft(leftLocal);
+    setTop(topLocal);
+    setDiffX(0);
+    setDiffY(0);
   }
 
   const alignTop = (topPointer) => {
