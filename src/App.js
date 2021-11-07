@@ -11,47 +11,105 @@ function App() {
 
   const [diffX, setDiffX] = useState(0)
   const [diffY, setDiffY] = useState(0)
-  const [left, setLeft] = useState(320)
-  const [top, setTop] = useState(450)
+  const [left, setLeft] = useState(10)
+  const [top, setTop] = useState(window.innerHeight - videoHeight - 10)
   const [isDragging, setIsDragging] = useState(false)
-  const [styles, setStyles] = useState({})
+  const [isTouchDragging, setIsTouchDragging] = useState(false)
+  const [styles, setStyles] = useState({left: 10,top: window.innerHeight - videoHeight - 10})
 
   // useEffect(() => {
   //   vidRef.current.pause();
   // }, [isDragging])
 
   const detectDrag = (event) => {
-    console.log("screenX: ", event);
-    console.log("screenX: ", event.screenX, "screenY: ", event.screenY);
-    console.log("BoundX: ", event.currentTarget.getBoundingClientRect().left, "screenY: ", event.currentTarget.getBoundingClientRect().top);
-    console.log("innerWidth: ", window.innerWidth, "innerHeight: ", window.innerHeight);
-    setDiffX((event.screenX || event.touches[0].screenX) - event.currentTarget.getBoundingClientRect().left);
-    setDiffY((event.screenY || event.touches[0].screenY) - event.currentTarget.getBoundingClientRect().top)
+    // console.log("screenX: ", event);
+    // console.log("screenX: ", event.screenX, "screenY: ", event.screenY);
+    // console.log("BoundX: ", event.currentTarget.getBoundingClientRect().left, "screenY: ", event.currentTarget.getBoundingClientRect().top);
+    // console.log("innerWidth: ", window.innerWidth, "innerHeight: ", window.innerHeight);
+    setDiffX((event.screenX || (event.touches ? event.touches[0].screenX : 0)) - event.currentTarget.getBoundingClientRect().left);
+    setDiffY((event.screenY || (event.touches ? event.touches[0].screenY : 0)) - event.currentTarget.getBoundingClientRect().top)
     setIsDragging(true);
+    setIsTouchDragging(false);
   }
 
   const continueDrag = (event) => {
     if(isDragging) {
-      setLeft((event.screenX || event.touches[0].screenX) - diffX);
-      setTop((event.screenY || event.touches[0].screenY)- diffY);
+      setLeft((event.screenX || (event.touches ? event.touches[0].screenX : 0)) - diffX);
+      setTop((event.screenY || (event.touches ? event.touches[0].screenY : 0))- diffY);
       //console.log("Dragging ScreenX: ", event.screenX, " ScreenY: ", event.screenY);
       setStyles({
                 left: alignLeft(left),
                 top: alignTop(top)
       });
       vidRef.current.pause();
+      //if(event.touches)
+        setIsTouchDragging(true);
     }
     //vidRef.current.pause();
   }    
 
   const endDrag = (event) => {
-    if(!(event && event.touches)){
-      if(isDragging){
+    console.log("Eventtouches: ", !event.touches);
+    if(!(event.touches) && isTouchDragging){
+      if(isTouchDragging){
         vidRef.current.play();
       }
-      vidRef.current.play();
+      // vidRef.current.play();
+    }
+    console.log("Dragging: ", isTouchDragging);
+    if(event.touches && !isTouchDragging){
+      const video = ReactDOM.findDOMNode(document.getElementById("VideoPlayer"));
+      if(video.paused){
+        vidRef.current.play();
+      } else {
+        vidRef.current.pause();
+      }
+    }
+    if(isTouchDragging){
+      cornerTransition();
     }
     setIsDragging(false);
+  }
+
+  const cornerTransition = () => {
+    let quadrant = 3, leftLocal, topLocal;
+    if( (left + videoWidth/2) >  window.innerWidth/2) {
+      if((top + videoHeight/2) >  window.innerHeight/2)
+        quadrant = 4;
+      else
+        quadrant = 1;
+    } else {
+      if((top + videoHeight/2) >  window.innerHeight/2)
+      quadrant = 3;
+      else
+        quadrant = 2;
+    }
+    console.log("Quadrant: ", quadrant)
+    switch(quadrant){
+      case 1 : 
+              leftLocal = window.innerWidth - 10;
+              topLocal = 0;
+              break;
+      case 2: 
+              leftLocal = 10;
+              topLocal = 0;
+              break;
+      case 3: 
+              leftLocal = 10;
+              topLocal = window.innerHeight - 10;
+              break;
+      case 4: 
+              leftLocal = window.innerWidth - 10;
+              topLocal = window.innerHeight - 10;              
+              break;
+      default: console.log("Confused!")
+    }
+    console.log("Left: ", leftLocal, " Top: ", topLocal);
+    setStyles({
+      left: alignLeft(leftLocal),
+      top: alignTop(topLocal),
+      transition: '0.5s'
+    });
   }
 
   const endDrag2 = (event) => {
@@ -107,7 +165,7 @@ function App() {
         <div className="videoContainer" style={styles} 
         onTouchStart={(e) => detectDrag(e)} onTouchMove={(e) => continueDrag(e)} onTouchEnd={(e) => endDrag(e)}
         onMouseDown={(e) => detectDrag(e)} onMouseMove={(e) => continueDrag(e)} onMouseUp={(e) => endDrag(e)}>
-          <video ref={vidRef} width={videoWidth} height={videoHeight} controls>
+          <video id="VideoPlayer" ref={vidRef} width={videoWidth} height={videoHeight} controls>
             <source src={video} type="video/mp4"/>
           </video>    
         </div>
